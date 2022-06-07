@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
+var request = require("request");
 
 const logger = morgan("tiny");
 
@@ -51,8 +52,40 @@ app.get("/api/wx_openid", async (req, res) => {
 
 const port = process.env.PORT || 80;
 
+function checkData() {
+  let requestData = {
+    env: "training-kp81r",
+    query: 'db.collection("forW").limit(10).skip(1).get()',
+  };
+  // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
+  request(
+    {
+      url: "https://api.weixin.qq.com/tcb/databasequery",
+      method: "POST",
+      json: true,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    },
+    function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log(body); // 请求成功的处理逻辑
+      }
+    }
+  );
+  // sms(phone, templateId, params)
+  //   .then(function () {
+  //     res.json({ success: true, msg: "成功" });
+  //   })
+  //   .catch(function (err) {
+  //     res.json({ success: false, msg: "失败" });
+  //   });
+}
+
 async function bootstrap() {
-  await initDB();
+  // await initDB();
+  checkData();
   app.listen(port, () => {
     console.log("启动成功", port);
   });
