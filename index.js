@@ -35,10 +35,12 @@ app.get("/", async (req, res) => {
       res.send({
         code: 0,
         data: body,
+        error: error,
+        response: response,
       });
     }
   );
-  res.sendFile(path.join(__dirname, "index.html"));
+  // res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // 更新计数
