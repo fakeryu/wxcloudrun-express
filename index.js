@@ -29,7 +29,7 @@ app.get("/", async (req, res) => {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(requestData),
+      body: requestData,
     },
     function (error, response, body) {
       res.send({
