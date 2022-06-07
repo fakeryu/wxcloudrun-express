@@ -15,6 +15,29 @@ app.use(logger);
 
 // 首页
 app.get("/", async (req, res) => {
+  // res.sendFile(path.join(__dirname, "index.html"));
+  let requestData = {
+    env: "training-kp81r",
+    query: 'db.collection("forW").limit(10).skip(1).get()',
+  };
+  // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
+  request(
+    {
+      url: "https://api.weixin.qq.com/tcb/databasequery",
+      method: "POST",
+      json: true,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    },
+    function (error, response, body) {
+      res.send({
+        code: 0,
+        data: body,
+      });
+    }
+  );
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
