@@ -80,7 +80,7 @@ const port = process.env.PORT || 80;
 function checkData() {
   let requestData = {
     env: "training-kp81r",
-    query: 'db.collection("forW").limit(10).skip(1).get()',
+    query: 'db.collection("forW").limit(100).skip(1).get()',
   };
   // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
   request(
@@ -95,7 +95,7 @@ function checkData() {
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        console.log(body); // 请求成功的处理逻辑
+        let data = JSON.parse(body.data);
       }
     }
   );
