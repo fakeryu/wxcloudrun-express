@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
 var request = require("request");
+var dayjs = require("dayjs");
 
 const logger = morgan("tiny");
 
@@ -18,7 +19,7 @@ app.get("/", async (req, res) => {
   // res.sendFile(path.join(__dirname, "index.html"));
   let requestData = {
     env: "training-kp81r",
-    query: 'db.collection("forW").limit(100).skip(1).get()',
+    query: 'db.collection("excel").limit(100).skip(1).get()',
   };
   // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
   request(
@@ -32,9 +33,13 @@ app.get("/", async (req, res) => {
       body: requestData,
     },
     function (error, response, body) {
+      let data = JSON.parse(body.data);
+      const needNoticeData = data.filter((item) => {
+        return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
+      });
       res.send({
         code: 0,
-        data: body,
+        data: needNoticeData,
         error: error,
         response: response,
       });
@@ -80,7 +85,7 @@ const port = process.env.PORT || 80;
 function checkData() {
   let requestData = {
     env: "training-kp81r",
-    query: 'db.collection("forW").limit(100).skip(1).get()',
+    query: 'db.collection("excel").limit(100).skip(0).get()',
   };
   // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
   request(
@@ -96,16 +101,21 @@ function checkData() {
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
         let data = JSON.parse(body.data);
+        const needNoticeData = data.filter((item) => {
+          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
+        });
+        if (needNoticeData.length) {
+          // sms(phone, templateId, params)
+          //   .then(function () {
+          //     res.json({ success: true, msg: "成功" });
+          //   })
+          //   .catch(function (err) {
+          //     res.json({ success: false, msg: "失败" });
+          //   });
+        }
       }
     }
   );
-  // sms(phone, templateId, params)
-  //   .then(function () {
-  //     res.json({ success: true, msg: "成功" });
-  //   })
-  //   .catch(function (err) {
-  //     res.json({ success: false, msg: "失败" });
-  //   });
 }
 
 async function bootstrap() {
