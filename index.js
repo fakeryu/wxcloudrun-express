@@ -33,16 +33,19 @@ app.get("/", async (req, res) => {
       body: requestData,
     },
     function (error, response, body) {
-      let data = JSON.parse(body.data);
-      const needNoticeData = data.filter((item) => {
-        return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
-      });
-      res.send({
-        code: 0,
-        data: needNoticeData,
-        error: error,
-        response: response,
-      });
+      var data = [];
+      data = body.data;
+      if (data.length) {
+        const needNoticeData = data.filter((item) => {
+          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
+        });
+        res.send({
+          code: 0,
+          data: needNoticeData,
+          error: error,
+          response: response,
+        });
+      }
     }
   );
   // res.sendFile(path.join(__dirname, "index.html"));
@@ -100,7 +103,7 @@ function checkData() {
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        let data = JSON.parse(body.data);
+        let data = body.data && JSON.parse(body.data);
         const needNoticeData = data.filter((item) => {
           return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
         });
