@@ -123,7 +123,7 @@ function checkData() {
 
 async function bootstrap() {
   // await initDB();
-  checkData();
+  // checkData();
   app.listen(port, () => {
     console.log("启动成功", port);
   });
