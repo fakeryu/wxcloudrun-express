@@ -24,90 +24,90 @@ app.get("/", async (req, res) => {
     query:
       'db.collection("excel").limit(100).skip(0).orderBy("rowId", "asc").get()',
   };
-  request(
-    {
-      url: "https://api.weixin.qq.com/tcb/databasequery",
-      method: "POST",
-      json: true,
-      headers: {
-        "content-type": "application/json",
-      },
-      body: requestData,
-    },
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        const data = body.data || [];
-        if (data.length) {
-          const needNoticeData = data.filter((item) => {
-            item = JSON.parse(item);
-            return dayjs().isAfter(
-              dayjs(item.endTime).subtract(7, "day"),
-              "day"
-            );
-          });
-          let needSendLen = Math.ceil(needNoticeData.length / 6);
-          let index = 0;
-          let params = needNoticeData
-            .slice(index * 6, (index + 1) * 6)
-            .map((item) => {
-              item = JSON.parse(item);
-              return item.rowId;
-            })
-            .join(",");
-          // console.log(params);
-          sms(13540887226, 1434418, [params])
-            .then(function () {
-              index++;
-              console.log("短信发送成功");
-            })
-            .catch(function (err) {
-              console.log("短信发送失败");
-            });
-          let timer = setTimeout(() => {
-            if (index === needSendLen) clearTimeout(timer);
-            params = needNoticeData
-              .slice(index * 6, (index + 1) * 6)
-              .map((item) => {
-                item = JSON.parse(item);
-                return item.rowId;
-              })
-              .join(",");
-            sms(13540887226, 1434418, [params])
-              .then(function () {
-                console.log("短信发送成功");
-              })
-              .catch(function (err) {
-                console.log("短信发送失败");
-              });
-          }, 31000);
+  // request(
+  //   {
+  //     url: "https://api.weixin.qq.com/tcb/databasequery",
+  //     method: "POST",
+  //     json: true,
+  //     headers: {
+  //       "content-type": "application/json",
+  //     },
+  //     body: requestData,
+  //   },
+  //   function (error, response, body) {
+  //     if (!error && response.statusCode == 200) {
+  //       const data = body.data || [];
+  //       if (data.length) {
+  //         const needNoticeData = data.filter((item) => {
+  //           item = JSON.parse(item);
+  //           return dayjs().isAfter(
+  //             dayjs(item.endTime).subtract(7, "day"),
+  //             "day"
+  //           );
+  //         });
+  //         let needSendLen = Math.ceil(needNoticeData.length / 6);
+  //         let index = 0;
+  //         let params = needNoticeData
+  //           .slice(index * 6, (index + 1) * 6)
+  //           .map((item) => {
+  //             item = JSON.parse(item);
+  //             return item.rowId;
+  //           })
+  //           .join(",");
+  //         // console.log(params);
+  //         sms(13540887226, 1434418, [params])
+  //           .then(function () {
+  //             index++;
+  //             console.log("短信发送成功");
+  //           })
+  //           .catch(function (err) {
+  //             console.log("短信发送失败");
+  //           });
+  //         let timer = setTimeout(() => {
+  //           if (index === needSendLen) clearTimeout(timer);
+  //           params = needNoticeData
+  //             .slice(index * 6, (index + 1) * 6)
+  //             .map((item) => {
+  //               item = JSON.parse(item);
+  //               return item.rowId;
+  //             })
+  //             .join(",");
+  //           sms(13540887226, 1434418, [params])
+  //             .then(function () {
+  //               console.log("短信发送成功");
+  //             })
+  //             .catch(function (err) {
+  //               console.log("短信发送失败");
+  //             });
+  //         }, 31000);
 
-          // if (needNoticeData.length) {
-          //   for (
-          //     let index = 0;
-          //     index < Math.ceil(needNoticeData.length / 6);
-          //     index++
-          //   ) {
-          //     let params = needNoticeData
-          //       .slice(index * 6, (index + 1) * 6)
-          //       .map((item) => {
-          //         item = JSON.parse(item);
-          //         return item.rowId;
-          //       })
-          //       .join(",");
-          //     // console.log(params);
-          //     sms(13540887226, 1434418, [params])
-          //       .then(function () {
-          //         console.log("短信发送成功");
-          //       })
-          //       .catch(function (err) {
-          //         console.log("短信发送失败");
-          //       });
-          //   }
-          // }
-        }
-      }
-    }
-  );
+  //         // if (needNoticeData.length) {
+  //         //   for (
+  //         //     let index = 0;
+  //         //     index < Math.ceil(needNoticeData.length / 6);
+  //         //     index++
+  //         //   ) {
+  //         //     let params = needNoticeData
+  //         //       .slice(index * 6, (index + 1) * 6)
+  //         //       .map((item) => {
+  //         //         item = JSON.parse(item);
+  //         //         return item.rowId;
+  //         //       })
+  //         //       .join(",");
+  //         //     // console.log(params);
+  //         //     sms(13540887226, 1434418, [params])
+  //         //       .then(function () {
+  //         //         console.log("短信发送成功");
+  //         //       })
+  //         //       .catch(function (err) {
+  //         //         console.log("短信发送失败");
+  //         //       });
+  //         //   }
+  //         // }
+  //       }
+  //     }
+  //   }
+  // );
   // res.sendFile(path.join(__dirname, "index.html"));
 });
 
@@ -240,7 +240,7 @@ async function bootstrap() {
   // });
   app.listen(port, () => {
     console.log("启动成功", port);
+    checkData();
   });
 }
-checkData();
 bootstrap();
