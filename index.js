@@ -45,29 +45,65 @@ app.get("/", async (req, res) => {
               "day"
             );
           });
-          if (needNoticeData.length) {
-            for (
-              let index = 0;
-              index < Math.ceil(needNoticeData.length / 6);
-              index++
-            ) {
-              let params = needNoticeData
-                .slice(index * 6, (index + 1) * 6)
-                .map((item) => {
-                  item = JSON.parse(item);
-                  return item.rowId;
-                })
-                .join(",");
-              // console.log(params);
-              sms(13540887226, 1434418, [params])
-                .then(function () {
-                  console.log("短信发送成功");
-                })
-                .catch(function (err) {
-                  console.log("短信发送失败");
-                });
-            }
-          }
+          let needSendLen = Math.ceil(needNoticeData.length / 6);
+          let index = 0;
+          let params = needNoticeData
+            .slice(index * 6, (index + 1) * 6)
+            .map((item) => {
+              item = JSON.parse(item);
+              return item.rowId;
+            })
+            .join(",");
+          // console.log(params);
+          sms(13540887226, 1434418, [params])
+            .then(function () {
+              index++;
+              console.log("短信发送成功");
+            })
+            .catch(function (err) {
+              console.log("短信发送失败");
+            });
+          let timer = setTimeout(() => {
+            if (index === needSendLen) clearTimeout(timer);
+            params = needNoticeData
+              .slice(index * 6, (index + 1) * 6)
+              .map((item) => {
+                item = JSON.parse(item);
+                return item.rowId;
+              })
+              .join(",");
+            sms(13540887226, 1434418, [params])
+              .then(function () {
+                console.log("短信发送成功");
+              })
+              .catch(function (err) {
+                console.log("短信发送失败");
+              });
+          }, 31000);
+
+          // if (needNoticeData.length) {
+          //   for (
+          //     let index = 0;
+          //     index < Math.ceil(needNoticeData.length / 6);
+          //     index++
+          //   ) {
+          //     let params = needNoticeData
+          //       .slice(index * 6, (index + 1) * 6)
+          //       .map((item) => {
+          //         item = JSON.parse(item);
+          //         return item.rowId;
+          //       })
+          //       .join(",");
+          //     // console.log(params);
+          //     sms(13540887226, 1434418, [params])
+          //       .then(function () {
+          //         console.log("短信发送成功");
+          //       })
+          //       .catch(function (err) {
+          //         console.log("短信发送失败");
+          //       });
+          //   }
+          // }
         }
       }
     }
@@ -180,7 +216,6 @@ function checkData() {
 async function bootstrap() {
   // await initDB();
   // schedule.scheduleJob("0 0 10 * * *", () => {
-  checkData();
   // });
 
   // sms(13540887226, 1434418, [123])
