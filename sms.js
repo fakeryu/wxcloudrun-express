@@ -8,9 +8,9 @@ module.exports = function (phoneNumber, templateId, params) {
   var smsType = 0;
   var ssender = qcloudsms.SmsSingleSender();
   return new Promise(function (resolve, reject) {
-    console.log("短信接受号码:" + phoneNumber);
-    console.log("模版ID:" + templateId);
-    console.log("模版变量:" + params);
+    // console.log("短信接受号码:" + phoneNumber);
+    // console.log("模版ID:" + templateId);
+    // console.log("模版变量:" + params);
     ssender.sendWithParam(
       "86",
       phoneNumber,
@@ -24,7 +24,7 @@ module.exports = function (phoneNumber, templateId, params) {
           reject(); //发送失败
         } else {
           //所有短信全部认定发送成功
-          console.log(resData);
+          // console.log(resData);
           resolve(true);
         }
       }
