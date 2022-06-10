@@ -23,49 +23,49 @@ app.get("/", async (req, res) => {
     env: "training-kp81r",
     query: 'db.collection("excel").limit(100).skip(1).get()',
   };
-  // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
-  // request(
-  //   {
-  //     url: "https://api.weixin.qq.com/tcb/databasequery",
-  //     method: "POST",
-  //     json: true,
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: requestData,
-  //   },
-  //   function (error, response, body) {
-  //     var data = [];
-  //     data = body.data;
-  //     if (data.length) {
-  //       const needNoticeData = data.filter((item) => {
-  //         item = JSON.parse(item);
-  //         return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
-  //       });
-  //       let params = needNoticeData
-  //         .map((item) => {
-  //           item = JSON.parse(item);
-  //           return item.name;
-  //         })
-  //         .join(",");
-  //       if (needNoticeData.length) {
-  //         sms(13540887226, 1434418, [params])
-  //           .then(function () {
-  //             console.log("短信发送成功");
-  //           })
-  //           .catch(function (err) {
-  //             console.log("短信发送失败");
-  //           });
-  //       }
-  //       res.send({
-  //         code: 0,
-  //         data: needNoticeData,
-  //         error: error,
-  //         response: params,
-  //       });
-  //     }
-  //   }
-  // );
+  request(
+    {
+      url: "https://api.weixin.qq.com/tcb/databasequery",
+      method: "POST",
+      json: true,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: requestData,
+    },
+    function (error, response, body) {
+      var data = [];
+      data = body.data;
+      if (data.length) {
+        const needNoticeData = data.filter((item) => {
+          item = JSON.parse(item);
+          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
+        });
+        if (needNoticeData.length) {
+          for (
+            let index = 0;
+            index < Math.ceil(needNoticeData / 6);
+            index++
+          ) {
+            let params = needNoticeData
+              .slice(index * 6, (index + 1) * 6 - 1)
+              .map((item) => {
+                item = JSON.parse(item);
+                return item.rowId;
+              })
+              .join(",");
+            console.log(params);
+          }
+        }
+        res.send({
+          code: 0,
+          data: needNoticeData,
+          error: error,
+          response: Math.ceil(needNoticeData / 6),
+        });
+      }
+    }
+  );
   // res.sendFile(path.join(__dirname, "index.html"));
 });
 
@@ -102,6 +102,17 @@ app.get("/api/wx_openid", async (req, res) => {
 });
 
 const port = process.env.PORT || 80;
+
+/**
+ * 将数组拆分成多个指定长度的区块
+ * @example
+ *
+ */
+const chunk = (arr = [], size = 1) => {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+    arr.slice(i * size, i * size + size)
+  );
+};
 
 function checkData() {
   let requestData = {
@@ -143,7 +154,7 @@ function checkData() {
                   return item.rowId;
                 })
                 .join(",");
-                console.log(params);
+              console.log(params);
               // sms(13540887226, 1434418, [params])
               //   .then(function () {
               //     console.log("短信发送成功");
