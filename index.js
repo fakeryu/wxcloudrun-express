@@ -230,7 +230,7 @@ async function bootstrap() {
   // await initDB();
   // schedule.scheduleJob("0 0 10 * * *", () => {
   // });
-
+  checkData();
   // sms(13540887226, 1434418, [123])
   // .then(function () {
   //   console.log("短信发送成功");
@@ -240,7 +240,6 @@ async function bootstrap() {
   // });
   app.listen(port, () => {
     console.log("启动成功", port);
-    checkData();
   });
 }
 bootstrap();
