@@ -100,10 +100,11 @@ function checkData() {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(requestData),
+      body: requestData,
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
+        console.log(body.data);
         const data = body.data || [];
         if (data.length) {
           const needNoticeData = data.filter((item) => {
