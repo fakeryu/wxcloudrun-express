@@ -21,7 +21,8 @@ app.get("/", async (req, res) => {
   // res.sendFile(path.join(__dirname, "index.html"));
   let requestData = {
     env: "training-kp81r",
-    query: 'db.collection("excel").limit(100).skip(1).get()',
+    query:
+      'db.collection("excel").limit(100).skip(1).orderBy("rowId", "asc").get()',
   };
   request(
     {
@@ -41,39 +42,51 @@ app.get("/", async (req, res) => {
           item = JSON.parse(item);
           return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
         });
-        if (needNoticeData.length) {
-          for (
-            let index = 0;
-            index < Math.ceil(needNoticeData.length / 6);
-            index++
-          ) {
-            let params = needNoticeData
-              .slice(index * 6, (index + 1) * 6 - 1)
-              .map((item) => {
-                item = JSON.parse(item);
-                return item.rowId;
-              })
-              .join(",");
-            sms(13540887226, 1434418, [params])
-              .then(function () {
-                res.send({
-                  code: 0,
-                  data: params,
-                  error: null,
-                  response: Math.ceil(needNoticeData.length / 6),
-                });
-                console.log("短信发送成功");
-              })
-              .catch(function (err) {
-                res.send({
-                  code: 0,
-                  data: params,
-                  error: err,
-                  response: Math.ceil(needNoticeData.length / 6),
-                });
-              });
-          }
-        }
+        res.send({
+          code: 0,
+          data: needNoticeData,
+          error: null,
+          response: Math.ceil(needNoticeData.length / 6),
+        });
+        // if (needNoticeData.length) {
+        //   for (
+        //     let index = 0;
+        //     index < Math.ceil(needNoticeData.length / 6);
+        //     index++
+        //   ) {
+        //     let params = needNoticeData
+        //       .slice(index * 6, (index + 1) * 6 - 1)
+        //       .map((item) => {
+        //         item = JSON.parse(item);
+        //         return item.rowId;
+        //       })
+        //       .join(",");
+        //     res.send({
+        //       code: 0,
+        //       data: needNoticeData,
+        //       error: null,
+        //       response: Math.ceil(needNoticeData.length / 6),
+        //     });
+        //     // sms(13540887226, 1434418, [params])
+        //     //   .then(function () {
+        //     //     res.send({
+        //     //       code: 0,
+        //     //       data: needNoticeData,
+        //     //       error: null,
+        //     //       response: Math.ceil(needNoticeData.length / 6),
+        //     //     });
+        //     //     console.log("短信发送成功");
+        //     //   })
+        //     //   .catch(function (err) {
+        //     //     res.send({
+        //     //       code: 0,
+        //     //       data: params,
+        //     //       error: err,
+        //     //       response: Math.ceil(needNoticeData.length / 6),
+        //     //     });
+        //     //   });
+        //   }
+        // }
       }
     }
   );
@@ -128,7 +141,8 @@ const chunk = (arr = [], size = 1) => {
 function checkData() {
   let requestData = {
     env: "training-kp81r",
-    query: 'db.collection("excel").limit(100).skip(0).get()',
+    query:
+      'db.collection("excel").limit(100).skip(0).orderBy("rowId", "asc").get()',
   };
   // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
   request(
@@ -184,7 +198,7 @@ function checkData() {
 async function bootstrap() {
   // await initDB();
   // schedule.scheduleJob("0 0 10 * * *", () => {
-  checkData();
+  // checkData();
   // });
 
   // sms(13540887226, 1434418, [123])
