@@ -44,7 +44,7 @@ app.get("/", async (req, res) => {
         if (needNoticeData.length) {
           for (
             let index = 0;
-            index < Math.ceil(needNoticeData / 6);
+            index < Math.ceil(needNoticeData.length / 6);
             index++
           ) {
             let params = needNoticeData
@@ -61,7 +61,7 @@ app.get("/", async (req, res) => {
           code: 0,
           data: needNoticeData,
           error: error,
-          response: Math.ceil(needNoticeData / 6),
+          response: Math.ceil(needNoticeData.length / 6),
         });
       }
     }
@@ -144,7 +144,7 @@ function checkData() {
           if (needNoticeData.length) {
             for (
               let index = 0;
-              index < Math.ceil(needNoticeData / 6);
+              index < Math.ceil(needNoticeData.length / 6);
               index++
             ) {
               let params = needNoticeData
