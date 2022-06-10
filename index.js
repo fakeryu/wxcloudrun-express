@@ -37,6 +37,7 @@ app.get("/", async (req, res) => {
       data = body.data;
       if (data.length) {
         const needNoticeData = data.filter((item) => {
+          item = JSON.parse(item);
           return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
         });
         res.send({
