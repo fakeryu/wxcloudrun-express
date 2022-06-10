@@ -136,7 +136,7 @@ function checkData() {
             })
             .join(",");
           if (needNoticeData.length) {
-            sms(13540887226, 1434418, params)
+            sms(13540887226, 1434418, [params])
               .then(function () {
                 console.log("短信发送成功");
               })
@@ -153,6 +153,13 @@ function checkData() {
 async function bootstrap() {
   // await initDB();
   checkData();
+  // sms(13540887226, 1434418, [123])
+  // .then(function () {
+  //   console.log("短信发送成功");
+  // })
+  // .catch(function (err) {
+  //   console.log("短信发送失败");
+  // });
   app.listen(port, () => {
     console.log("启动成功", port);
   });

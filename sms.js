@@ -12,8 +12,8 @@ module.exports = function (phoneNumber, templateId, params) {
     console.log("模版ID:" + templateId);
     console.log("模版变量:" + params);
     ssender.sendWithParam(
-      86,
-      phoneNumber.split(","),
+      "86",
+      phoneNumber,
       templateId,
       params,
       config.smssign,
