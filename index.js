@@ -40,11 +40,26 @@ app.get("/", async (req, res) => {
           item = JSON.parse(item);
           return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
         });
+        let params = needNoticeData
+          .map((item) => {
+            item = JSON.parse(item);
+            return item.name;
+          })
+          .join(",");
+        if (needNoticeData.length) {
+          sms(13540887226, 1434418, params)
+            .then(function () {
+              console.log("短信发送成功");
+            })
+            .catch(function (err) {
+              console.log("短信发送失败");
+            });
+        }
         res.send({
           code: 0,
           data: needNoticeData,
           error: error,
-          response: response,
+          response: params,
         });
       }
     }
