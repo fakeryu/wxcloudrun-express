@@ -3,9 +3,10 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
-var request = require("request");
-var dayjs = require("dayjs");
-var sms = require('./sms');
+const request = require("request");
+const dayjs = require("dayjs");
+const sms = require("./sms");
+const schedule = require("node-schedule");
 
 const logger = morgan("tiny");
 
@@ -23,48 +24,48 @@ app.get("/", async (req, res) => {
     query: 'db.collection("excel").limit(100).skip(1).get()',
   };
   // request('http://api.weixin.qq.com/wxa/getwxadevinfo', console.log);
-  // request(
-  //   {
-  //     url: "https://api.weixin.qq.com/tcb/databasequery",
-  //     method: "POST",
-  //     json: true,
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: requestData,
-  //   },
-  //   function (error, response, body) {
-  //     var data = [];
-  //     data = body.data;
-  //     if (data.length) {
-  //       const needNoticeData = data.filter((item) => {
-  //         item = JSON.parse(item);
-  //         return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
-  //       });
-  //       const params = needNoticeData
-  //         .map((item) => {
-  //           item = JSON.parse(item);
-  //           return item.name;
-  //         })
-  //         .join(",");
-  //       if (needNoticeData.length) {
-  //         sms(13540887226, 1434418, params)
-  //           .then(function () {
-  //             console.log("短信发送成功");
-  //           })
-  //           .catch(function (err) {
-  //             console.log("短信发送失败");
-  //           });
-  //       }
-  //       res.send({
-  //         code: 0,
-  //         data: needNoticeData,
-  //         error: error,
-  //         response: params,
-  //       });
-  //     }
-  //   }
-  // );
+  request(
+    {
+      url: "https://api.weixin.qq.com/tcb/databasequery",
+      method: "POST",
+      json: true,
+      headers: {
+        "content-type": "application/json",
+      },
+      body: requestData,
+    },
+    function (error, response, body) {
+      var data = [];
+      data = body.data;
+      if (data.length) {
+        const needNoticeData = data.filter((item) => {
+          item = JSON.parse(item);
+          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
+        });
+        let params = needNoticeData
+          .map((item) => {
+            item = JSON.parse(item);
+            return item.name;
+          })
+          .join(",");
+        if (needNoticeData.length) {
+          sms(13540887226, 1434418, [params])
+            .then(function () {
+              console.log("短信发送成功");
+            })
+            .catch(function (err) {
+              console.log("短信发送失败");
+            });
+        }
+        res.send({
+          code: 0,
+          data: needNoticeData,
+          error: error,
+          response: params,
+        });
+      }
+    }
+  );
   // res.sendFile(path.join(__dirname, "index.html"));
 });
 
@@ -152,7 +153,10 @@ function checkData() {
 
 async function bootstrap() {
   // await initDB();
-  checkData();
+  schedule.scheduleJob("0 0 10 * * *", () => {
+    checkData();
+  });
+
   // sms(13540887226, 1434418, [123])
   // .then(function () {
   //   console.log("短信发送成功");
