@@ -23,49 +23,49 @@ app.get("/", async (req, res) => {
     env: "training-kp81r",
     query: 'db.collection("excel").limit(100).skip(1).get()',
   };
-  request(
-    {
-      url: "https://api.weixin.qq.com/tcb/databasequery",
-      method: "POST",
-      json: true,
-      headers: {
-        "content-type": "application/json",
-      },
-      body: requestData,
-    },
-    function (error, response, body) {
-      var data = [];
-      data = body.data;
-      if (data.length) {
-        const needNoticeData = data.filter((item) => {
-          item = JSON.parse(item);
-          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
-        });
-        if (needNoticeData.length) {
-          for (
-            let index = 0;
-            index < Math.ceil(needNoticeData.length / 6);
-            index++
-          ) {
-            let params = needNoticeData
-              .slice(index * 6, (index + 1) * 6 - 1)
-              .map((item) => {
-                item = JSON.parse(item);
-                return item.rowId;
-              })
-              .join(",");
-            console.log(params);
-          }
-        }
-        res.send({
-          code: 0,
-          data: needNoticeData,
-          error: error,
-          response: Math.ceil(needNoticeData.length / 6),
-        });
-      }
-    }
-  );
+  // request(
+  //   {
+  //     url: "https://api.weixin.qq.com/tcb/databasequery",
+  //     method: "POST",
+  //     json: true,
+  //     headers: {
+  //       "content-type": "application/json",
+  //     },
+  //     body: requestData,
+  //   },
+  //   function (error, response, body) {
+  //     var data = [];
+  //     data = body.data;
+  //     if (data.length) {
+  //       const needNoticeData = data.filter((item) => {
+  //         item = JSON.parse(item);
+  //         return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"), "day");
+  //       });
+  //       if (needNoticeData.length) {
+  //         for (
+  //           let index = 0;
+  //           index < Math.ceil(needNoticeData.length / 6);
+  //           index++
+  //         ) {
+  //           let params = needNoticeData
+  //             .slice(index * 6, (index + 1) * 6 - 1)
+  //             .map((item) => {
+  //               item = JSON.parse(item);
+  //               return item.rowId;
+  //             })
+  //             .join(",");
+  //           console.log(params);
+  //         }
+  //       }
+  //       res.send({
+  //         code: 0,
+  //         data: needNoticeData,
+  //         error: error,
+  //         response: Math.ceil(needNoticeData.length / 6),
+  //       });
+  //     }
+  //   }
+  // );
   // res.sendFile(path.join(__dirname, "index.html"));
 });
 
@@ -154,14 +154,14 @@ function checkData() {
                   return item.rowId;
                 })
                 .join(",");
-              console.log(params);
-              // sms(13540887226, 1434418, [params])
-              //   .then(function () {
-              //     console.log("短信发送成功");
-              //   })
-              //   .catch(function (err) {
-              //     console.log("短信发送失败");
-              //   });
+              // console.log(params);
+              sms(13540887226, 1434418, [params])
+                .then(function () {
+                  console.log("短信发送成功");
+                })
+                .catch(function (err) {
+                  console.log("短信发送失败");
+                });
             }
           }
         }
@@ -173,7 +173,7 @@ function checkData() {
 async function bootstrap() {
   // await initDB();
   // schedule.scheduleJob("0 0 10 * * *", () => {
-    checkData();
+  checkData();
   // });
 
   // sms(13540887226, 1434418, [123])
