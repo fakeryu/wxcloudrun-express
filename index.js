@@ -104,18 +104,31 @@ function checkData() {
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        let data = body.data && JSON.parse(body.data);
-        const needNoticeData = data.filter((item) => {
-          return dayjs().isAfter(dayjs(item.endTime).subtract(7, "day"));
-        });
-        if (needNoticeData.length) {
-          // sms(phone, templateId, params)
-          //   .then(function () {
-          //     res.json({ success: true, msg: "成功" });
-          //   })
-          //   .catch(function (err) {
-          //     res.json({ success: false, msg: "失败" });
-          //   });
+        var data = [];
+        data = body.data;
+        if (data.length) {
+          const needNoticeData = data.filter((item) => {
+            item = JSON.parse(item);
+            return dayjs().isAfter(
+              dayjs(item.endTime).subtract(7, "day"),
+              "day"
+            );
+          });
+          let params = needNoticeData
+            .map((item) => {
+              item = JSON.parse(item);
+              return item.name;
+            })
+            .join(",");
+          if (needNoticeData.length) {
+            sms(13540887226, 1434418, params)
+              .then(function () {
+                console.log("短信发送成功");
+              })
+              .catch(function (err) {
+                console.log("短信发送失败");
+              });
+          }
         }
       }
     }
