@@ -172,9 +172,9 @@ function checkData() {
 
 async function bootstrap() {
   // await initDB();
-  schedule.scheduleJob("0 0 10 * * *", () => {
+  // schedule.scheduleJob("0 0 10 * * *", () => {
     checkData();
-  });
+  // });
 
   // sms(13540887226, 1434418, [123])
   // .then(function () {
