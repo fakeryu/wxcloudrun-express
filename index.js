@@ -104,8 +104,7 @@ function checkData() {
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        var data = [];
-        data = body.data;
+        const data = body.data || [];
         if (data.length) {
           const needNoticeData = data.filter((item) => {
             item = JSON.parse(item);
